@@ -13,7 +13,6 @@ from datetime import datetime, timedelta
 from time import sleep
 import os
 
-# Настройка SSL для requests
 def create_session():
     session = requests.Session()
     retry_strategy = Retry(
@@ -25,7 +24,6 @@ def create_session():
     session.mount("http://", adapter)
     session.mount("https://", adapter)
     
-    # Отключаем проверку SSL для локальной разработки
     try:
         session.verify = True
     except:
@@ -33,7 +31,6 @@ def create_session():
     
     return session
 
-# Создаем глобальную сессию
 requests_session = create_session()
 
 app = FastAPI(title="Investment Analysis API", version="1.0.0")
@@ -42,7 +39,6 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://fastapi-binance-calculations.vercel.app",
-        "http://13.50.4.32:8001",
         "http://13.50.4.32:8000",
         "http://13.50.4.32",
         "http://localhost:3000",
