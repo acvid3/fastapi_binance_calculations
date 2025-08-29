@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api:
     build: .
@@ -7,6 +5,4 @@ services:
       - "8000:8000"
     environment:
       - PORT=8000
-    volumes:
-      - .:/app
     restart: unless-stopped
