@@ -16,7 +16,6 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://fastapi-binance-calculations.vercel.app",
-        "http://13.50.4.32:8001",
         "http://13.50.4.32:8000",
         "http://13.50.4.32",
         "http://localhost:3000",
