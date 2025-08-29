@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://13.50.4.32:8000';
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://13.50.4.32:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 function InvestmentForm({ onSubmit, loading }) {
   const [formData, setFormData] = useState({
