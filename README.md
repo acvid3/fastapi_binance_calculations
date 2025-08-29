@@ -165,3 +165,4 @@ This project is for educational purposes. Use at your own risk.
 ---
 
 **Note**: This tool is for educational purposes only. Always do your own research before making investment decisions.
+# fastapi_binance_calculations
