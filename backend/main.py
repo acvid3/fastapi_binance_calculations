@@ -5,10 +5,36 @@ from pydantic import BaseModel
 from typing import List, Optional
 import json
 import requests
+import requests.adapters
+from urllib3.util.retry import Retry
+import ssl
 import csv
 from datetime import datetime, timedelta
 from time import sleep
 import os
+
+# Настройка SSL для requests
+def create_session():
+    session = requests.Session()
+    retry_strategy = Retry(
+        total=3,
+        backoff_factor=1,
+        status_forcelist=[429, 500, 502, 503, 504],
+    )
+    adapter = requests.adapters.HTTPAdapter(max_retries=retry_strategy)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    
+    # Отключаем проверку SSL для локальной разработки
+    try:
+        session.verify = True
+    except:
+        session.verify = False
+    
+    return session
+
+# Создаем глобальную сессию
+requests_session = create_session()
 
 app = FastAPI(title="Investment Analysis API", version="1.0.0")
 
@@ -68,7 +94,7 @@ def get_price(start_time: int, limit: int, symbol: str, interval: str):
     url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&startTime={start_time}&limit={limit}"
     
     try:
-        response = requests.get(url)
+        response = requests_session.get(url)
         response.raise_for_status()
         response_data = response.json()
         
@@ -252,7 +278,7 @@ async def analyze_investments(params: InvestmentParams):
 @app.get("/symbols")
 async def get_available_symbols():
     try:
-        response = requests.get("https://api.binance.com/api/v3/exchangeInfo")
+        response = requests_session.get("https://api.binance.com/api/v3/exchangeInfo")
         response.raise_for_status()
         data = response.json()
         symbols = [symbol["symbol"] for symbol in data["symbols"] if symbol["status"] == "TRADING"]
