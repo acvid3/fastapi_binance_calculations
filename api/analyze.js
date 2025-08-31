@@ -1,4 +1,6 @@
-export default async function handler(req, res) {
+const fetch = require('node-fetch');
+
+module.exports = async (req, res) => {
     if (req.method === 'OPTIONS') {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -46,4 +48,4 @@ export default async function handler(req, res) {
             details: error.message 
         });
     }
-}
+};

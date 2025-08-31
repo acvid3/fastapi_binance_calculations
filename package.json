@@ -1,0 +1,8 @@
+{
+  "name": "fastapi-binance-calculations",
+  "version": "1.0.0",
+  "description": "Investment Analysis API with FastAPI backend and React frontend",
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  }
+}

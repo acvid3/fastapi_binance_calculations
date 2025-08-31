@@ -1,4 +1,6 @@
-export default async function handler(req, res) {
+const fetch = require('node-fetch');
+
+module.exports = async (req, res) => {
     if (req.method === 'OPTIONS') {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -7,35 +9,37 @@ export default async function handler(req, res) {
         return;
     }
 
-    if (req.method !== 'GET') {
-        res.status(405).json({ error: 'Method not allowed' });
-        return;
-    }
-
+    const { path } = req.query;
+    const backendUrl = 'http://13.50.4.32:8000';
+    
     try {
-        const backendUrl = 'http://13.50.4.32:8000/api/symbols';
-        console.log(`Fetching symbols from: ${backendUrl}`);
+        const url = `${backendUrl}/${path.join('/')}`;
+        console.log(`Proxying request to: ${url}`);
         
-        const response = await fetch(backendUrl, {
-            method: 'GET',
+        const fetchOptions = {
+            method: req.method,
             headers: {
                 'Content-Type': 'application/json',
                 'User-Agent': 'Vercel-Proxy'
             }
-        });
+        };
+        
+        if (req.method !== 'GET' && req.body) {
+            fetchOptions.body = JSON.stringify(req.body);
+        }
+        
+        const response = await fetch(url, fetchOptions);
         
         if (!response.ok) {
             console.error(`Backend responded with status: ${response.status}`);
             return res.status(response.status).json({ 
-                error: `Backend error: ${response.status}`,
-                url: backendUrl
+                error: `Backend error: ${response.status}` 
             });
         }
         
         const data = await response.json();
         
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Content-Type', 'application/json');
         res.status(200).json(data);
         
     } catch (error) {
@@ -45,4 +49,4 @@ export default async function handler(req, res) {
             details: error.message 
         });
     }
-}
+};
