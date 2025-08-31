@@ -1,0 +1,56 @@
+.summarySection h3 {
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.summaryGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.summaryCard {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.summaryCard h4 {
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.summaryValue {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+}
+
+.positive {
+    color: #28a745 !important;
+}
+
+.negative {
+    color: #dc3545 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .summaryGrid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    
+    .summaryCard {
+        padding: 15px;
+    }
+    
+    .summaryValue {
+        font-size: 20px;
+    }
+}

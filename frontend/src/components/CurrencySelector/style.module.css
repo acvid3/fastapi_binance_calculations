@@ -1,0 +1,158 @@
+.sidebar {
+    width: 320px;
+    background: #1a1a1a;
+    border-right: 1px solid #333;
+    height: 100vh;
+    overflow-y: auto;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+
+.header {
+    padding: 20px;
+    border-bottom: 1px solid #333;
+}
+
+.header h3 {
+    margin: 0 0 15px 0;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background: #2a2a2a;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+    border-color: #007bff;
+}
+
+.searchInput::placeholder {
+    color: #888;
+}
+
+.symbolsList {
+    padding: 10px 0;
+}
+
+.symbolItem {
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.symbolItem:hover {
+    background: #2a2a2a;
+}
+
+.symbolItem.selected {
+    background: #007bff;
+    color: #fff;
+}
+
+.symbolHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.symbolText {
+    font-size: 16px;
+    font-weight: 600;
+    color: inherit;
+}
+
+.checkmark {
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.symbolDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.priceInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.currentPrice {
+    font-size: 14px;
+    font-weight: 500;
+    color: inherit;
+}
+
+.priceChange {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.priceChange.positive {
+    color: #00d4aa;
+    background: rgba(0, 212, 170, 0.1);
+}
+
+.priceChange.negative {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.volumeInfo,
+.rangeInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.volumeLabel,
+.rangeLabel {
+    color: #888;
+    font-weight: 500;
+}
+
+.volumeValue,
+.rangeValue {
+    color: inherit;
+    font-weight: 500;
+}
+
+.loading {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid #333;
+    }
+    
+    .symbolItem {
+        padding: 12px 16px;
+    }
+}

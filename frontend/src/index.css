@@ -1,310 +1,110 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f5f5f5;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
 }
 
 .app {
-  min-height: 100vh;
-  padding: 20px;
+    min-height: 100vh;
+    display: flex;
+}
+
+.app-content {
+    flex: 1;
+    margin-left: 320px;
+    padding: 20px;
 }
 
 .app-header {
-  text-align: center;
-  margin-bottom: 40px;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .app-header h1 {
-  color: #333;
-  margin-bottom: 10px;
+    color: #333;
+    margin-bottom: 10px;
 }
 
 .app-header p {
-  color: #666;
-  margin-bottom: 20px;
+    color: #666;
+    margin-bottom: 20px;
 }
 
 .deployment-info {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .deployment-info span {
-  background: #007bff;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
 }
 
 .app-main {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.investment-form {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 30px;
-}
-
-.investment-form h2 {
-  margin-bottom: 25px;
-  color: #333;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 25px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #555;
-}
-
-.form-group input,
-.form-group select {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-}
-
-.form-actions {
-  text-align: center;
-}
-
-.submit-btn {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.submit-btn:hover {
-  background: #0056b3;
-}
-
-.submit-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .error-message {
-  background: #f8d7da;
-  color: #721c24;
-  padding: 15px;
-  border-radius: 6px;
-  margin: 20px 0;
-  border: 1px solid #f5c6cb;
+    background: #f8d7da;
+    color: #721c24;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #f5c6cb;
 }
 
-.analysis-results {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  overflow: hidden;
+.error-message h3 {
+    margin-bottom: 10px;
+    color: #721c24;
 }
 
-.tabs {
-  display: flex;
-  border-bottom: 1px solid #ddd;
-}
-
-.tab {
-  flex: 1;
-  padding: 15px 20px;
-  background: #f8f9fa;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.tab:hover {
-  background: #e9ecef;
-}
-
-.tab.active {
-  background: white;
-  border-bottom: 2px solid #007bff;
-}
-
-.tab-content {
-  padding: 30px;
-}
-
-.summary-section h3,
-.trades-section h3,
-.charts-section h3 {
-  margin-bottom: 25px;
-  color: #333;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.summary-card {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 6px;
-  text-align: center;
-}
-
-.summary-card h4 {
-  margin-bottom: 10px;
-  color: #555;
-  font-size: 14px;
-}
-
-.summary-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-}
-
-.summary-value.positive {
-  color: #28a745;
-}
-
-.summary-value.negative {
-  color: #dc3545;
-}
-
-.table-container {
-  overflow-x: auto;
-}
-
-.trades-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.trades-table th,
-.trades-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.trades-table th {
-  background: #f8f9fa;
-  font-weight: 600;
-  color: #555;
-}
-
-.trades-table tr:hover {
-  background: #f8f9fa;
-}
-
-.buy-row {
-  background: #e8f5e8;
-}
-
-.sell-row {
-  background: #fff3cd;
-}
-
-.trade-type {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.trade-type.buy {
-  background: #d4edda;
-  color: #155724;
-}
-
-.trade-type.sell {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.status {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status.open {
-  background: #d1ecf1;
-  color: #0c5460;
-}
-
-.status.closed {
-  background: #d4edda;
-  color: #155724;
-}
-
-.chart-container {
-  margin-bottom: 40px;
-}
-
-.chart-container h4 {
-  margin-bottom: 20px;
-  color: #555;
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .summary-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-  
-  .deployment-info {
-    flex-direction: column;
-    align-items: center;
-  }
+    .app {
+        flex-direction: column;
+    }
+    
+    .app-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+    
+    .app-header {
+        margin-bottom: 30px;
+        padding: 15px;
+    }
+    
+    .deployment-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .deployment-info span {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
 }

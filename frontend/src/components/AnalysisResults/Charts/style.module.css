@@ -1,0 +1,26 @@
+.chartsSection h3 {
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.chartContainer {
+    margin-bottom: 40px;
+}
+
+.chartContainer h4 {
+    margin-bottom: 20px;
+    color: #555;
+    font-size: 18px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chartContainer {
+        margin-bottom: 30px;
+    }
+    
+    .chartContainer h4 {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+}
