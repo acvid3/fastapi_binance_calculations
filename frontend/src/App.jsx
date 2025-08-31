@@ -4,8 +4,6 @@ import AnalysisResults from './components/AnalysisResults';
 import CurrencySelector from './components/CurrencySelector';
 import './index.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://13.50.4.32:8000' : '/api');
-
 function App() {
     const [analysisData, setAnalysisData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -18,8 +16,8 @@ function App() {
         
         try {
             const url = import.meta.env.DEV 
-                ? `${API_BASE_URL}/api/analyze`
-                : `${API_BASE_URL}/analyze`;
+                ? 'http://13.50.4.32:8000/api/analyze'
+                : '/api/analyze';
                 
             const response = await fetch(url, {
                 method: 'POST',

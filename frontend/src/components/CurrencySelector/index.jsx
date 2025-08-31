@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './style.module.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://13.50.4.32:8000' : '/api');
-
 const CurrencySelector = ({ onSymbolChange, selectedSymbol }) => {
     const [symbols, setSymbols] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -15,8 +13,8 @@ const CurrencySelector = ({ onSymbolChange, selectedSymbol }) => {
     const fetchSymbols = async () => {
         try {
             const url = import.meta.env.DEV 
-                ? `${API_BASE_URL}/api/symbols`
-                : `${API_BASE_URL}/symbols`;
+                ? 'http://13.50.4.32:8000/api/symbols'
+                : '/api/symbols';
                 
             const response = await fetch(url);
             const data = await response.json();
@@ -116,7 +114,7 @@ const CurrencySelector = ({ onSymbolChange, selectedSymbol }) => {
                             
                             <div className={styles.rangeInfo}>
                                 <span className={styles.rangeLabel}>24h:</span>
-                                <span className={styles.rangeValue}>
+                                <span className={styles.volumeValue}>
                                     ${formatPrice(symbol.low24h)} - ${formatPrice(symbol.high24h)}
                                 </span>
                             </div>
