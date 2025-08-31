@@ -1,61 +1,120 @@
 # FASTAPI BINANCE CALCULATIONS - ПОЛНЫЙ КОД ПРОЕКТА
 
-## ========================================
-## BACKEND/MAIN.PY
-## ========================================
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from typing import List, Optional
-import json
-import requests
-import requests.adapters
-from urllib3.util.retry import Retry
-import ssl
-import csv
-from datetime import datetime, timedelta
-from time import sleep
-import os
+## 📋 ОПИСАНИЕ ПРОЕКТА
 
-# Настройка SSL для requests
-def create_session():
-    session = requests.Session()
-    retry_strategy = Retry(
-        total=3,
-        backoff_factor=1,
-        status_forcelist=[429, 500, 502, 503, 504],
-    )
-    adapter = requests.adapters.HTTPAdapter(max_retries=retry_strategy)
-    session.mount("http://", adapter)
-    session.mount("https://", adapter)
-    
-    try:
-        session.verify = True
-    except:
-        session.verify = False
-    
-    return session
+Инвестиционная платформа для анализа торговых стратегий с использованием данных Binance API. Проект состоит из FastAPI backend и React frontend с боковой панелью выбора валютных пар.
 
-# Создаем глобальную сессию
-requests_session = create_session()
+## 🏗️ АРХИТЕКТУРА
 
-app = FastAPI(title="Investment Analysis API", version="1.0.0")
+### Backend (FastAPI + Clean Architecture)
+- **FastAPI** - веб-фреймворк для API
+- **Clean Architecture** - разделение на слои (models, repositories, services, API)
+- **Асинхронность** - параллельная загрузка данных через aiohttp
+- **Docker** - контейнеризация для AWS развертывания
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://fastapi-binance-calculations.vercel.app",
-        "http://13.50.4.32:8000",
-        "http://13.50.4.32",
-        "http://localhost:3000",
-        "http://localhost:5173",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+### Frontend (React + Vite)
+- **React 18** - современный UI фреймворк
+- **Vite** - быстрый сборщик
+- **CSS Modules** - модульные стили
+- **Vercel** - хостинг frontend
 
+### API Proxy
+- **Vercel Functions** - проксирование API запросов к backend
+- **CORS** - разрешение cross-origin запросов
+- **node-fetch** - HTTP клиент для Vercel Functions
+
+## 🚀 ОСНОВНЫЕ ВОЗМОЖНОСТИ
+
+### 1. Боковая панель выбора валютных пар
+- Отображение всех доступных USDT пар
+- 24-часовые данные: цена, изменение %, объем, диапазон
+- Поиск по названию пары
+- Автоматический выбор первой пары по умолчанию
+
+### 2. Анализ инвестиционных стратегий
+- Параметры: начальный баланс, сумма сделки, порог, комиссия
+- Выбор временного интервала (1m, 5m, 15m, 1h, 4h, 1d)
+- Выбор периода анализа (начальная и конечная дата)
+- Стратегия: покупка при падении цены на заданный процент
+
+### 3. Результаты анализа
+- **Summary**: итоговый баланс, прибыль, ROI, количество сделок
+- **Trades Table**: детальная таблица всех сделок с индикаторами рынка
+- **Charts**: графики баланса, цены и прибыли
+- **Market Indicators**: BULL/BEAR индикаторы для каждой сделки
+
+### 4. Параллельный мониторинг
+- Асинхронная загрузка данных для всех валютных пар
+- Семaphore (10) для ограничения одновременных запросов
+- Кэширование 24-часовых данных
+- Обработка ошибок и retry логика
+
+## 📁 СТРУКТУРА ПРОЕКТА
+
+```
+fastapi_binance_calculations/
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── __init__.py
+│   │   │   └── investment_routes.py
+│   │   ├── models/
+│   │   │   ├── __init__.py
+│   │   │   └── investment_models.py
+│   │   ├── repositories/
+│   │   │   ├── __init__.py
+│   │   │   └── async_binance_repository.py
+│   │   ├── services/
+│   │   │   ├── __init__.py
+│   │   │   └── async_investment_analysis_service.py
+│   │   ├── utils/
+│   │   │   ├── __init__.py
+│   │   │   └── date_utils.py
+│   │   ├── __init__.py
+│   │   └── main.py
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   ├── docker.bash
+│   ├── install.bash
+│   ├── requirements.txt
+│   └── run.py
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── AnalysisResults/
+│   │   │   │   ├── Charts/
+│   │   │   │   ├── Summary/
+│   │   │   │   ├── TradesTable/
+│   │   │   │   ├── index.jsx
+│   │   │   │   └── style.module.css
+│   │   │   ├── CurrencySelector/
+│   │   │   │   ├── index.jsx
+│   │   │   │   └── style.module.css
+│   │   │   ├── InvestmentForm/
+│   │   │   │   ├── index.jsx
+│   │   │   │   └── style.module.css
+│   │   │   └── MarketIndicator/
+│   │   │       ├── index.jsx
+│   │   │       └── style.module.css
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── package.json
+│   ├── vercel.json
+│   └── vite.config.js
+├── api/
+│   ├── symbols.js
+│   ├── analyze.js
+│   ├── [...path].js
+│   └── test.js
+├── package.json
+└── README.md
+```
+
+## 🔧 КЛЮЧЕВЫЕ КОМПОНЕНТЫ
+
+### Backend Models (Pydantic)
+```python
 class InvestmentParams(BaseModel):
     initial_balance: float = 10000
     trade_amount: float = 1000
@@ -65,6 +124,8 @@ class InvestmentParams(BaseModel):
     end_date: str
     symbol: str = "ETHUSDT"
     interval: str = "1h"
+    start_timestamp: Optional[int] = None
+    end_timestamp: Optional[int] = None
 
 class TradeRecord(BaseModel):
     order_id: str
@@ -85,1439 +146,268 @@ class AnalysisResult(BaseModel):
     trades: List[TradeRecord]
     summary: dict
     chart_data: dict
-
-def convert_date_to_timestamp(date_str: str) -> int:
-    try:
-        dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-        return int(dt.timestamp() * 1000)
-    except:
-        raise HTTPException(status_code=400, detail="Invalid date format. Use ISO format (YYYY-MM-DDTHH:MM:SS)")
-
-def get_price(start_time: int, limit: int, symbol: str, interval: str):
-    url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&startTime={start_time}&limit={limit}"
-    
-    try:
-        response = requests_session.get(url)
-        response.raise_for_status()
-        response_data = response.json()
-        
-        data = []
-        for kline in response_data:
-            price_data = {
-                "timestamp": kline[0],           
-                "open": float(kline[1]),         
-                "high": float(kline[2]),         
-                "low": float(kline[3]),          
-                "close": float(kline[4]),        
-                "volume": float(kline[5]),       
-                "close_time": kline[6]           
-            }
-            data.append(price_data)
-        
-        return data
-    except Exception as e:
-        return []
-
-def get_historical_price(start_time: int, end_time: int, limit: int, symbol: str, interval: str):
-    history_list = []
-    current_start = start_time
-    
-    while current_start < end_time:
-        data = get_price(current_start, limit, symbol, interval)
-        if not data:
-            break
-
-        sleep(0.1)
-        max_unixtime = max(item["timestamp"] for item in data)
-        current_start = max_unixtime + 1
-        history_list.extend(data)
-    
-    return history_list
-
-def analyze_investment_strategy(params: InvestmentParams) -> AnalysisResult:
-    start_timestamp = convert_date_to_timestamp(params.start_date)
-    end_timestamp = convert_date_to_timestamp(params.end_date)
-    
-    history_list = get_historical_price(start_timestamp, end_timestamp, 1000, params.symbol, params.interval)
-    
-    if not history_list:
-        raise HTTPException(status_code=400, detail="No data available for the specified period")
-    
-    balance = params.initial_balance
-    eth_balance = 0
-    pending_sells = []
-    order_counter = 1
-    trades = []
-    last_buy_price = None
-    
-    current_price = float(history_list[0]["close"])
-    last_buy_price = current_price
-    min_balance = balance
-    total_profit = 0
-    total_trades = 0
-    
-    for row in history_list:
-        price = float(row["close"])
-        timestamp = row["timestamp"]
-
-        if balance < min_balance:
-            min_balance = balance
-
-        if balance >= params.trade_amount:
-            if price <= last_buy_price * (1 - params.threshold_percent):
-                commission = params.trade_amount * params.commission_rate
-                eth_amount = (params.trade_amount - commission) / price
-                
-                balance -= params.trade_amount
-                eth_balance += eth_amount
-                last_buy_price = price
-               
-                sell_task = {
-                    "task_id": f"TASK_{order_counter:04d}",
-                    "buy_id": f"BUY_{order_counter:04d}",                         
-                    "buy_price": price,                        
-                    "target_price": price * (1 + params.threshold_percent), 
-                    "eth_amount": eth_amount,                 
-                    "cost_usdt": params.trade_amount,                 
-                    "buy_timestamp": timestamp
-                }
-                pending_sells.append(sell_task)
-                
-                trade_record = TradeRecord(
-                    order_id=f"BUY_{order_counter:04d}",
-                    order_type="BUY",
-                    date_time=datetime.fromtimestamp(timestamp / 1000).strftime("%Y-%m-%d %H:%M:%S"),
-                    price=price,
-                    eth_amount=eth_amount,
-                    usdt_amount=params.trade_amount,
-                    commission=commission,
-                    balance_after=balance,
-                    eth_balance_after=eth_balance,
-                    level_price=price,
-                    related_order_id=None,
-                    status="OPEN",
-                    profit=None
-                )
-                trades.append(trade_record)
-                order_counter += 1
-
-        if pending_sells:
-            for task in list(pending_sells):
-                buy_price = task["buy_price"]
-                target_price = task["target_price"]
-
-                if price >= target_price:
-                    eth_to_sell = task["eth_amount"]
-                    gross_usdt = eth_to_sell * price
-                    commission = gross_usdt * params.commission_rate
-                    net_usdt = gross_usdt - commission
-
-                    invested = task["cost_usdt"]
-                    profit = net_usdt - invested
-                    total_profit += profit
-                    total_trades += 1
-
-                    balance += net_usdt
-                    eth_balance -= eth_to_sell
-                    last_buy_price = price
-
-                    trade_record = TradeRecord(
-                        order_id=f"SELL_{order_counter:04d}",
-                        order_type="SELL",
-                        date_time=datetime.fromtimestamp(timestamp / 1000).strftime("%Y-%m-%d %H:%M:%S"),
-                        price=price,
-                        eth_amount=-eth_to_sell,
-                        usdt_amount=net_usdt,
-                        commission=commission,
-                        balance_after=balance,
-                        eth_balance_after=eth_balance,
-                        level_price=buy_price,
-                        related_order_id=task["buy_id"],
-                        status="CLOSED",
-                        profit=profit
-                    )
-                    trades.append(trade_record)
-                    order_counter += 1
-                    pending_sells.remove(task)
-
-        if not pending_sells and price > last_buy_price:
-            last_buy_price = price
-
-    chart_data = {
-        "dates": [trade.date_time for trade in trades],
-        "prices": [trade.price for trade in trades],
-        "balances": [trade.balance_after for trade in trades],
-        "profits": [trade.profit if trade.profit else 0 for trade in trades]
-    }
-    
-    summary = {
-        "initial_balance": params.initial_balance,
-        "final_balance": balance + (eth_balance * float(history_list[-1]["close"])),
-        "total_profit": total_profit,
-        "total_trades": total_trades,
-        "min_balance": min_balance,
-        "roi_percent": ((balance + (eth_balance * float(history_list[-1]["close"]))) - params.initial_balance) / params.initial_balance * 100,
-        "pending_positions": len(pending_sells)
-    }
-    
-    return AnalysisResult(trades=trades, summary=summary, chart_data=chart_data)
-
-@app.get("/")
-async def root():
-    return {"message": "Investment Analysis API", "version": "1.0.0", "deployment": "AWS"}
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
-
-@app.post("/analyze", response_model=AnalysisResult)
-async def analyze_investments(params: InvestmentParams):
-    try:
-        result = analyze_investment_strategy(params)
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/symbols")
-async def get_available_symbols():
-    try:
-        response = requests_session.get("https://api.binance.com/api/v3/exchangeInfo")
-        response.raise_for_status()
-        data = response.json()
-        symbols = [symbol["symbol"] for symbol in data["symbols"] if symbol["status"] == "TRADING"]
-        return {"symbols": symbols[:50]}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
-
-## ========================================
-## BACKEND/REQUIREMENTS.TXT
-## ========================================
-fastapi==0.116.1
-uvicorn==0.35.0
-requests==2.32.5
-python-dateutil==2.9.0.post0
-pydantic==2.11.7
-
-## ========================================
-## BACKEND/DOCKERFILE
-## ========================================
-FROM python:3.11-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-EXPOSE 8000
-
-CMD ["python", "main.py"]
-
-## ========================================
-## BACKEND/DOCKER-COMPOSE.YML
-## ========================================
-services:
-  api:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - PORT=8000
-    restart: unless-stopped
-
-## ========================================
-## FRONTEND/PACKAGE.JSON
-## ========================================
-{
-  "name": "investment-analysis-frontend",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "recharts": "^2.8.0",
-    "date-fns": "^2.30.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "vite": "^5.0.8"
-  }
-}
-
-## ========================================
-## FRONTEND/VITE.CONFIG.JS
-## ========================================
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 3000,
-    proxy: {
-      '/api': {
-        target: 'http://13.50.4.32:8000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: true,
-  },
-})
-
-## ========================================
-## FRONTEND/VERCEL.JSON
-## ========================================
-{
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "http://13.50.4.32:8000/$1"
-    }
-  ]
-}
-
-## ========================================
-## FRONTEND/INDEX.HTML
-## ========================================
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Investment Analysis</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
-
-## ========================================
-## FRONTEND/SRC/MAIN.JSX
-## ========================================
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
-
-## ========================================
-## FRONTEND/SRC/APP.JSX
-## ========================================
-import React, { useState } from 'react';
-import InvestmentForm from './components/InvestmentForm';
-import AnalysisResults from './components/AnalysisResults';
-import './index.css';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://13.50.4.32:8000';
-
-function App() {
-  const [analysisData, setAnalysisData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const handleAnalysis = async (formData) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch(`${API_BASE_URL}/analyze`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setAnalysisData(data);
-    } catch (err) {
-      setError(err.message);
-      console.error('Analysis error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Investment Strategy Analysis</h1>
-        <p>Analyze investment returns with commissions and trading steps</p>
-        <div className="deployment-info">
-          <span>Frontend: Vercel</span>
-          <span>Backend: AWS</span>
-        </div>
-      </header>
-      
-      <main className="app-main">
-        <InvestmentForm onSubmit={handleAnalysis} loading={loading} />
-        
-        {error && (
-          <div className="error-message">
-            <h3>Analysis Error:</h3>
-            <p>{error}</p>
-          </div>
-        )}
-        
-        {analysisData && (
-          <AnalysisResults data={analysisData} />
-        )}
-      </main>
-    </div>
-  );
-}
-
-export default App;
-
-## ========================================
-## FRONTEND/SRC/COMPONENTS/INVESTMENTFORM.JSX
-## ========================================
-import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://13.50.4.32:8000';
-
-function InvestmentForm({ onSubmit, loading }) {
-  const [formData, setFormData] = useState({
-    initial_balance: 10000,
-    trade_amount: 1000,
-    threshold_percent: 5,
-    commission_rate: 0.075,
-    start_date: format(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd\'T\'HH:mm'),
-    end_date: format(new Date(), 'yyyy-MM-dd\'T\'HH:mm'),
-    symbol: 'ETHUSDT',
-    interval: '1h'
-  });
-
-  const [symbols, setSymbols] = useState([]);
-  const [loadingSymbols, setLoadingSymbols] = useState(false);
-
-  useEffect(() => {
-    fetchSymbols();
-  }, []);
-
-  const fetchSymbols = async () => {
-    setLoadingSymbols(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/symbols`);
-      if (response.ok) {
-        const data = await response.json();
-        setSymbols(data.symbols);
-      }
-    } catch (error) {
-      console.error('Error fetching symbols:', error);
-    } finally {
-      setLoadingSymbols(false);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name.includes('percent') || name.includes('rate') ? parseFloat(value) : value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    const submitData = {
-      ...formData,
-      threshold_percent: formData.threshold_percent / 100,
-      commission_rate: formData.commission_rate / 100
-    };
-    
-    onSubmit(submitData);
-  };
-
-  return (
-    <div className="investment-form">
-      <h2>Analysis Parameters</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-grid">
-          <div className="form-group">
-            <label htmlFor="initial_balance">Initial Balance (USDT)</label>
-            <input
-              type="number"
-              id="initial_balance"
-              name="initial_balance"
-              value={formData.initial_balance}
-              onChange={handleInputChange}
-              min="100"
-              step="100"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="trade_amount">Trade Amount (USDT)</label>
-            <input
-              type="number"
-              id="trade_amount"
-              name="trade_amount"
-              value={formData.trade_amount}
-              onChange={handleInputChange}
-              min="10"
-              step="10"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="threshold_percent">Price Change Threshold (%)</label>
-            <input
-              type="number"
-              id="threshold_percent"
-              name="threshold_percent"
-              value={formData.threshold_percent}
-              onChange={handleInputChange}
-              min="0.1"
-              max="50"
-              step="0.1"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="commission_rate">Commission (%)</label>
-            <input
-              type="number"
-              id="commission_rate"
-              name="commission_rate"
-              value={formData.commission_rate}
-              onChange={handleInputChange}
-              min="0.001"
-              max="1"
-              step="0.001"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="start_date">Start Date</label>
-            <input
-              type="datetime-local"
-              id="start_date"
-              name="start_date"
-              value={formData.start_date}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="end_date">End Date</label>
-            <input
-              type="datetime-local"
-              id="end_date"
-              name="end_date"
-              value={formData.end_date}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="symbol">Trading Pair</label>
-            <select
-              id="symbol"
-              name="symbol"
-              value={formData.symbol}
-              onChange={handleInputChange}
-              required
-            >
-              {loadingSymbols ? (
-                <option>Loading...</option>
-              ) : (
-                symbols.map(symbol => (
-                  <option key={symbol} value={symbol}>{symbol}</option>
-                ))
-              )}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="interval">Interval</label>
-            <select
-              id="interval"
-              name="interval"
-              value={formData.interval}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="1m">1 minute</option>
-              <option value="5m">5 minutes</option>
-              <option value="15m">15 minutes</option>
-              <option value="1h">1 hour</option>
-              <option value="4h">4 hours</option>
-              <option value="1d">1 day</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="form-actions">
-          <button 
-            type="submit" 
-            className="submit-btn"
-            disabled={loading}
-          >
-            {loading ? 'Analyzing...' : 'Start Analysis'}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-}
-
-export default InvestmentForm;
-
-## ========================================
-## FRONTEND/SRC/COMPONENTS/ANALYSISRESULTS.JSX
-## ========================================
-import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
-
-function AnalysisResults({ data }) {
-  const [activeTab, setActiveTab] = useState('summary');
-
-  const { summary, trades, chart_data } = data;
-
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
-  };
-
-  const formatPercent = (value) => {
-    return `${value.toFixed(2)}%`;
-  };
-
-  const renderSummary = () => (
-    <div className="summary-section">
-      <h3>Results Summary</h3>
-      <div className="summary-grid">
-        <div className="summary-card">
-          <h4>Initial Balance</h4>
-          <p className="summary-value">{formatCurrency(summary.initial_balance)}</p>
-        </div>
-        <div className="summary-card">
-          <h4>Final Balance</h4>
-          <p className="summary-value">{formatCurrency(summary.final_balance)}</p>
-        </div>
-        <div className="summary-card">
-          <h4>Total Profit</h4>
-          <p className={`summary-value ${summary.total_profit >= 0 ? 'positive' : 'negative'}`}>
-            {formatCurrency(summary.total_profit)}
-          </p>
-        </div>
-        <div className="summary-card">
-          <h4>ROI</h4>
-          <p className={`summary-value ${summary.roi_percent >= 0 ? 'positive' : 'negative'}`}>
-            {formatPercent(summary.roi_percent)}
-          </p>
-        </div>
-        <div className="summary-card">
-          <h4>Total Trades</h4>
-          <p className="summary-value">{summary.total_trades}</p>
-        </div>
-        <div className="summary-card">
-          <h4>Min Balance</h4>
-          <p className="summary-value">{formatCurrency(summary.min_balance)}</p>
-        </div>
-        <div className="summary-card">
-          <h4>Open Positions</h4>
-          <p className="summary-value">{summary.pending_positions}</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderTradesTable = () => (
-    <div className="trades-section">
-      <h3>Trade History</h3>
-      <div className="table-container">
-        <table className="trades-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Type</th>
-              <th>Date/Time</th>
-              <th>Price</th>
-              <th>ETH Amount</th>
-              <th>USDT Amount</th>
-              <th>Commission</th>
-              <th>Balance After</th>
-              <th>Profit</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {trades.map((trade, index) => (
-              <tr key={index} className={trade.order_type === 'BUY' ? 'buy-row' : 'sell-row'}>
-                <td>{trade.order_id}</td>
-                <td>
-                  <span className={`trade-type ${trade.order_type.toLowerCase()}`}>
-                    {trade.order_type}
-                  </span>
-                </td>
-                <td>{trade.date_time}</td>
-                <td>{formatCurrency(trade.price)}</td>
-                <td>{trade.eth_amount.toFixed(6)}</td>
-                <td>{formatCurrency(trade.usdt_amount)}</td>
-                <td>{formatCurrency(trade.commission)}</td>
-                <td>{formatCurrency(trade.balance_after)}</td>
-                <td>
-                  {trade.profit ? (
-                    <span className={trade.profit >= 0 ? 'positive' : 'negative'}>
-                      {formatCurrency(trade.profit)}
-                    </span>
-                  ) : '-'}
-                </td>
-                <td>
-                  <span className={`status ${trade.status.toLowerCase()}`}>
-                    {trade.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-
-  const renderCharts = () => (
-    <div className="charts-section">
-      <h3>Charts</h3>
-      
-      <div className="chart-container">
-        <h4>Price and Balance Dynamics</h4>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={chart_data.dates.map((date, index) => ({
-            date: date.split(' ')[0],
-            price: chart_data.prices[index],
-            balance: chart_data.balances[index]
-          }))}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis yAxisId="left" />
-            <YAxis yAxisId="right" orientation="right" />
-            <Tooltip />
-            <Legend />
-            <Line yAxisId="left" type="monotone" dataKey="price" stroke="#8884d8" name="Price" />
-            <Line yAxisId="right" type="monotone" dataKey="balance" stroke="#82ca9d" name="Balance" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      <div className="chart-container">
-        <h4>Profit by Trades</h4>
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={chart_data.dates.map((date, index) => ({
-            date: date.split(' ')[0],
-            profit: chart_data.profits[index]
-          }))}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="profit" fill="#82ca9d" name="Profit" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="analysis-results">
-      <div className="tabs">
-        <button
-          className={`tab ${activeTab === 'summary' ? 'active' : ''}`}
-          onClick={() => setActiveTab('summary')}
-        >
-          Summary
-        </button>
-        <button
-          className={`tab ${activeTab === 'trades' ? 'active' : ''}`}
-          onClick={() => setActiveTab('trades')}
-        >
-          Trades
-        </button>
-        <button
-          className={`tab ${activeTab === 'charts' ? 'active' : ''}`}
-          onClick={() => setActiveTab('charts')}
-        >
-          Charts
-        </button>
-      </div>
-
-      <div className="tab-content">
-        {activeTab === 'summary' && renderSummary()}
-        {activeTab === 'trades' && renderTradesTable()}
-        {activeTab === 'charts' && renderCharts()}
-      </div>
-    </div>
-  );
-}
-
-export default AnalysisResults;
-
-## ========================================
-## FRONTEND/SRC/INDEX.CSS
-## ========================================
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-.app {
-  min-height: 100vh;
-  padding: 20px;
-}
-
-.app-header {
-  text-align: center;
-  margin-bottom: 40px;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.app-header h1 {
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.app-header p {
-  color: #666;
-  margin-bottom: 20px;
-}
-
-.deployment-info {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.deployment-info span {
-  background: #007bff;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-}
-
-.app-main {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.investment-form {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 30px;
-}
-
-.investment-form h2 {
-  margin-bottom: 25px;
-  color: #333;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 25px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #555;
-}
-
-.form-group input,
-.form-group select {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-}
-
-.form-actions {
-  text-align: center;
-}
-
-.submit-btn {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.submit-btn:hover {
-  background: #0056b3;
-}
-
-.submit-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.error-message {
-  background: #f8d7da;
-  color: #721c24;
-  padding: 15px;
-  border-radius: 6px;
-  margin: 20px 0;
-  border: 1px solid #f5c6cb;
-}
-
-.analysis-results {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  overflow: hidden;
-}
-
-.tabs {
-  display: flex;
-  border-bottom: 1px solid #ddd;
-}
-
-.tab {
-  flex: 1;
-  padding: 15px 20px;
-  background: #f8f9fa;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.tab:hover {
-  background: #e9ecef;
-}
-
-.tab.active {
-  background: white;
-  border-bottom: 2px solid #007bff;
-}
-
-.tab-content {
-  padding: 30px;
-}
-
-.summary-section h3,
-.trades-section h3,
-.charts-section h3 {
-  margin-bottom: 25px;
-  color: #333;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.summary-card {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 6px;
-  text-align: center;
-}
-
-.summary-card h4 {
-  margin-bottom: 10px;
-  color: #555;
-  font-size: 14px;
-}
-
-.summary-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-}
-
-.summary-value.positive {
-  color: #28a745;
-}
-
-.summary-value.negative {
-  color: #dc3545;
-}
-
-.table-container {
-  overflow-x: auto;
-}
-
-.trades-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.trades-table th,
-.trades-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.trades-table th {
-  background: #f8f9fa;
-  font-weight: 600;
-  color: #555;
-}
-
-.trades-table tr:hover {
-  background: #f8f9fa;
-}
-
-.buy-row {
-  background: #e8f5e8;
-}
-
-.sell-row {
-  background: #fff3cd;
-}
-
-.trade-type {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.trade-type.buy {
-  background: #d4edda;
-  color: #155724;
-}
-
-.trade-type.sell {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.status {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status.open {
-  background: #d1ecf1;
-  color: #0c5460;
-}
-
-.status.closed {
-  background: #d4edda;
-  color: #155724;
-}
-
-.chart-container {
-  margin-bottom: 40px;
-}
-
-.chart-container h4 {
-  margin-bottom: 20px;
-  color: #555;
-}
-
-@media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .summary-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-  
-  .deployment-info {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-## ========================================
-## README.MD
-## ========================================
-# Investment Strategy Analysis
-
-A comprehensive investment analysis tool that analyzes trading strategies with commissions and trading steps using Binance API data.
-
-## 🏗️ Architecture
-
-The project is split into two independent services:
-
-- **Backend**: FastAPI application deployed on AWS
-- **Frontend**: React + Vite application deployed on Vercel
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Python 3.11+
-- Node.js 18+
-- npm
-
-### Local Development
-
-1. **Start Backend:**
-   ```bash
-   cd backend
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   python main.py
-   ```
-   Backend will be available at: http://localhost:8000
-
-2. **Start Frontend:**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-   Frontend will be available at: http://localhost:3000
-
-## 📁 Project Structure
-
-```
-fastapi_binance_calculations/
-├── backend/                 # FastAPI backend
-│   ├── main.py             # Main application
-│   ├── requirements.txt    # Python dependencies
-│   ├── Dockerfile         # Docker configuration
-│   └── docker-compose.yml # Docker Compose
-├── frontend/               # React + Vite frontend
-│   ├── src/               # Source code
-│   ├── package.json       # Node.js dependencies
-│   ├── vite.config.js     # Vite configuration
-│   └── vercel.json        # Vercel deployment
-├── DEPLOYMENT.md           # Deployment guide
-└── README.md              # This file
 ```
 
-## 🛠️ Technologies
-
-### Backend
-- **FastAPI** - Modern Python web framework
-- **Pydantic** - Data validation
-- **Requests** - HTTP library
-- **Uvicorn** - ASGI server
-
-### Frontend
-- **React 18** - UI library
-- **Vite** - Build tool
-- **Recharts** - Chart components
-- **date-fns** - Date utilities
-
-### Infrastructure
-- **AWS** - Backend hosting (EC2, ECS, Lambda)
-- **Vercel** - Frontend hosting
-- **Docker** - Containerization
-
-## 📊 API Endpoints
-
-### Core Endpoints
-
-- `GET /` - API information
-- `GET /health` - Health check
-- `POST /analyze` - Investment analysis
-- `GET /symbols` - Available trading pairs
-
-### Analysis Parameters
-
-```json
-{
-  "initial_balance": 10000,
-  "trade_amount": 1000,
-  "threshold_percent": 0.05,
-  "commission_rate": 0.00075,
-  "start_date": "2024-01-01T00:00:00",
-  "end_date": "2024-02-01T00:00:00",
-  "symbol": "ETHUSDT",
-  "interval": "1h"
-}
+### Async Binance Repository
+```python
+class AsyncBinanceRepository:
+    def __init__(self):
+        self.base_url = "https://api.binance.com/api/v3"
+        self.session = None
+        self.semaphore = asyncio.Semaphore(10)
+    
+    async def get_historical_price_data_parallel(self, start_time, end_time, symbol, interval):
+        # Параллельная загрузка данных по чанкам
+        # Семaphore для ограничения одновременных запросов
+        # Автоматическое разбиение на оптимальные размеры
+        
+    async def get_available_symbols(self):
+        # Получение всех USDT пар
+        # Параллельная загрузка 24-часовых данных
+        # Фильтрация и сортировка результатов
 ```
 
-## 📈 Trading Algorithm
+### Investment Analysis Service
+```python
+class AsyncInvestmentAnalysisService:
+    async def analyze_investment_strategy(self, params: InvestmentParams):
+        # Основная логика анализа стратегии
+        # Параллельная загрузка исторических данных
+        # Выполнение торговой стратегии
+        # Расчет результатов и создание отчетов
+        
+    async def _execute_strategy_analysis(self, params, history_list):
+        # Логика торговой стратегии:
+        # 1. Покупка при падении цены на threshold_percent
+        # 2. Продажа при росте цены на threshold_percent
+        # 3. Учет комиссий Binance
+        # 4. Отслеживание баланса и прибыли
+```
 
-The system implements a DCA (Dollar Cost Averaging) strategy:
+### Frontend Components
 
-1. **Buy Signal**: When price drops by threshold percentage
-2. **Sell Signal**: When price rises by threshold percentage
-3. **Commission Calculation**: Applied to all trades
-4. **Position Tracking**: Monitors open and closed positions
+#### CurrencySelector (Боковая панель)
+- Поиск по валютным парам
+- Отображение 24-часовых данных
+- Автоматический выбор первой пары
+- Responsive дизайн для мобильных устройств
 
-## 🚀 Deployment
+#### InvestmentForm (Форма анализа)
+- Валидация параметров
+- Автоматическое заполнение выбранной пары
+- Подсказки и описания полей
+- Адаптивная сетка полей
+
+#### AnalysisResults (Результаты)
+- **Summary**: итоговая статистика
+- **TradesTable**: детальная таблица сделок с MarketIndicator
+- **Charts**: графики с использованием Recharts
+
+#### MarketIndicator (Индикаторы рынка)
+- Процент изменения цены
+- BULL/BEAR/NEUTRAL статус объема
+- Прогресс-бары для визуализации
+- Цветовое кодирование
+
+### Vercel Functions (API Proxy)
+
+#### /api/symbols
+```javascript
+module.exports = async (req, res) => {
+    // Проксирование GET запроса к backend
+    // Получение списка валютных пар с 24-часовыми данными
+    // CORS заголовки для cross-origin запросов
+};
+```
+
+#### /api/analyze
+```javascript
+module.exports = async (req, res) => {
+    // Проксирование POST запроса к backend
+    // Анализ инвестиционной стратегии
+    // Передача параметров и возврат результатов
+};
+```
+
+## 🌐 API ENDPOINTS
 
 ### Backend (AWS)
-
-- **EC2**: Simple deployment
-- **ECS**: Container orchestration
-- **Lambda**: Serverless functions
+- `GET /` - информация об API
+- `GET /health` - проверка здоровья сервиса
+- `POST /api/analyze` - анализ инвестиционной стратегии
+- `GET /api/symbols` - список доступных валютных пар
 
 ### Frontend (Vercel)
+- `/api/symbols` - прокси к backend (Vercel Function)
+- `/api/analyze` - прокси к backend (Vercel Function)
+- `/api/test` - тестовый endpoint
 
-- Automatic deployments from Git
-- Global CDN
-- Zero configuration
+## 🚀 РАЗВЕРТЫВАНИЕ
 
-## 🔒 Security
-
-- CORS configuration for production domains
-- Input validation with Pydantic
-- Rate limiting for API calls
-- Secure headers configuration
-
-## 📊 Monitoring
-
-- Health check endpoints
-- Error logging
-- Performance metrics
-- AWS CloudWatch integration
-
-## 🛠️ Development Commands
-
+### Backend (AWS)
 ```bash
-# Backend
 cd backend
-python main.py
-
-# Frontend
-cd frontend
-npm run dev
-npm run build
-
-# Docker
-docker-compose up --build
+./docker.bash  # Сборка и запуск через Docker
+# или
+source venv/bin/activate
+python run.py
 ```
 
-## 📝 License
+### Frontend (Vercel)
+```bash
+cd frontend
+npm install
+npm run build
+# Автоматический деплой на Vercel при push в main
+```
 
-This project is for educational purposes. Use at your own risk.
+## 🔒 БЕЗОПАСНОСТЬ И НАСТРОЙКИ
 
-## 🤝 Contributing
+### CORS Configuration
+```python
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Разрешены все origins
+    allow_credentials=False,  # Отключены credentials
+    allow_methods=["*"],  # Все HTTP методы
+    allow_headers=["*"],  # Все заголовки
+)
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+### Rate Limiting
+- Семaphore (10) для ограничения одновременных запросов к Binance
+- Автоматическое разбиение больших запросов на чанки
+- Обработка ошибок и retry логика
 
----
+### Environment Variables
+- `VITE_API_URL` - URL для API (опционально)
+- `PORT` - порт backend сервера
+- Автоматическое определение dev/production режимов
 
-**Note**: This tool is for educational purposes only. Always do your own research before making investment decisions.
+## 📊 ДАННЫЕ И МЕТРИКИ
 
-## ========================================
-## .GITIGNORE
-## ========================================
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+### Источники данных
+- **Binance API v3** - исторические данные, информация о парах
+- **Klines** - свечные данные для анализа
+- **24h Ticker** - статистика за последние 24 часа
 
-# Virtual Environment
-venv/
-env/
-ENV/
-env.bak/
-venv.bak/
+### Форматы данных
+- **Timestamps** - Unix timestamp в миллисекундах
+- **Prices** - точность до 6 знаков после запятой
+- **Volumes** - в базовой валюте пары
+- **Percentages** - десятичные дроби (0.05 = 5%)
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+### Ограничения
+- **Binance API** - 1200 запросов в минуту
+- **Chunk size** - максимум 1000 свечей за запрос
+- **Parallel requests** - максимум 10 одновременных запросов
 
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+## 🧪 ТЕСТИРОВАНИЕ
 
-# Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+### Backend Testing
+```bash
+# Проверка здоровья сервиса
+curl http://13.50.4.32:8000/health
 
-# Build outputs
-dist/
-build/
-.next/
-out/
+# Тест получения символов
+curl http://13.50.4.32:8000/api/symbols
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Тест анализа (POST)
+curl -X POST http://13.50.4.32:8000/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"initial_balance": 10000, "trade_amount": 1000, ...}'
+```
 
-# Logs
-logs
-*.log
+### Frontend Testing
+```bash
+# Локальная разработка
+cd frontend
+npm run dev
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Сборка для production
+npm run build
+npm run preview
+```
 
-# Coverage directory used by tools like istanbul
-coverage/
+## 🔄 ЖИЗНЕННЫЙ ЦИКЛ РАЗРАБОТКИ
 
-# Dependency directories
-jspm_packages/
+### Git Workflow
+1. **Feature Branch** - создание ветки для новой функциональности
+2. **Development** - разработка и тестирование
+3. **Pull Request** - код ревью и merge в main
+4. **Auto Deploy** - автоматический деплой на Vercel
 
-# Optional npm cache directory
-.npm
+### CI/CD Pipeline
+- **GitHub** - хранение кода и управление версиями
+- **Vercel** - автоматический деплой frontend
+- **AWS** - хостинг backend с Docker
+- **GitHub Actions** - автоматические проверки (опционально)
 
-# Optional eslint cache
-.eslintcache
+## 📈 ПРОИЗВОДИТЕЛЬНОСТЬ
 
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
+### Backend Optimization
+- **Async/Await** - неблокирующие операции
+- **Parallel Processing** - одновременная обработка запросов
+- **Connection Pooling** - переиспользование HTTP соединений
+- **Memory Management** - эффективное использование памяти
 
-# Optional REPL history
-.node_repl_history
+### Frontend Optimization
+- **Code Splitting** - разделение кода на чанки
+- **Lazy Loading** - загрузка компонентов по требованию
+- **CSS Modules** - изоляция стилей
+- **Tree Shaking** - удаление неиспользуемого кода
 
-# Output of 'npm pack'
-*.tgz
+## 🐛 ИЗВЕСТНЫЕ ПРОБЛЕМЫ И РЕШЕНИЯ
 
-# Yarn Integrity file
-.yarn-integrity
+### CORS Issues
+- **Проблема**: Mixed Content Policy (HTTPS → HTTP)
+- **Решение**: Vercel Functions для проксирования API
 
-# dotenv environment variables file
-.env.test
+### Rate Limiting
+- **Проблема**: Превышение лимитов Binance API
+- **Решение**: Семaphore и разбиение на чанки
 
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
+### Memory Usage
+- **Проблема**: Большие объемы исторических данных
+- **Решение**: Потоковая обработка и очистка памяти
 
-# Next.js build output
-.next
+## 🚀 БУДУЩИЕ УЛУЧШЕНИЯ
 
-# Nuxt.js build / generate output
-.nuxt
-dist
+### Backend
+- [ ] Кэширование данных в Redis
+- [ ] WebSocket для real-time обновлений
+- [ ] Аутентификация и авторизация
+- [ ] Логирование и мониторинг
 
-# Gatsby files
-.cache/
-public
+### Frontend
+- [ ] PWA (Progressive Web App)
+- [ ] Offline режим
+- [ ] Push уведомления
+- [ ] Темная/светлая тема
 
-# Storybook build outputs
-.out
-.storybook-out
+### Infrastructure
+- [ ] HTTPS на backend
+- [ ] Load balancing
+- [ ] Auto-scaling
+- [ ] Backup и восстановление
 
-# Temporary folders
-tmp/
-temp/
+## 📚 ДОКУМЕНТАЦИЯ И РЕСУРСЫ
 
-## ========================================
-## КОНЕЦ ФАЙЛА
-## ========================================
+### Технологии
+- **FastAPI**: https://fastapi.tiangolo.com/
+- **React**: https://reactjs.org/
+- **Vite**: https://vitejs.dev/
+- **Vercel**: https://vercel.com/
+- **Binance API**: https://binance-docs.github.io/apidocs/
+
+### Полезные ссылки
+- **Clean Architecture**: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
+- **Async Python**: https://docs.python.org/3/library/asyncio.html
+- **CSS Modules**: https://github.com/css-modules/css-modules
+- **Docker Compose**: https://docs.docker.com/compose/
+
+## 🎯 ЗАКЛЮЧЕНИЕ
+
+Проект представляет собой полнофункциональную инвестиционную платформу с современной архитектурой, асинхронной обработкой данных и responsive пользовательским интерфейсом. Использование Clean Architecture обеспечивает масштабируемость и поддерживаемость кода, а Vercel Functions решают проблемы с CORS и Mixed Content Policy.
+
+Система готова к production использованию и может быть легко расширена новыми функциями и улучшениями.
