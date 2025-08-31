@@ -2,9 +2,9 @@
 
 echo "[LOG] Rebuilding and starting containers..."
 clear
-docker compose down
-docker compose build
-docker compose up -d
+sudo docker compose down
+sudo docker compose build
+sudo docker compose up -d
 
 echo "[LOG] Streaming logs..."
-docker compose logs -f
+sudo docker compose logs -f
