@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiUrl } from '../../apiBase';
 import styles from './style.module.css';
 
 const CurrencySelector = ({ onSymbolChange, selectedSymbol }) => {
@@ -12,9 +13,8 @@ const CurrencySelector = ({ onSymbolChange, selectedSymbol }) => {
 
     const fetchSymbols = async () => {
         try {
-            const url = import.meta.env.DEV 
-                ? 'http://13.50.4.32:8000/api/symbols'
-                : '/api/symbols';
+            const url = apiUrl('symbols');
+            console.log('Fetching symbols from:', url);
                 
             const response = await fetch(url);
             const data = await response.json();

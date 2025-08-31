@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import InvestmentForm from './components/InvestmentForm';
 import AnalysisResults from './components/AnalysisResults';
 import CurrencySelector from './components/CurrencySelector';
+import { apiUrl } from './apiBase';
 import './index.css';
 
 function App() {
@@ -15,9 +16,8 @@ function App() {
         setError(null);
         
         try {
-            const url = import.meta.env.DEV 
-                ? 'http://13.50.4.32:8000/api/analyze'
-                : '/api/analyze';
+            const url = apiUrl('analyze');
+            console.log('Sending analysis request to:', url);
                 
             const response = await fetch(url, {
                 method: 'POST',
