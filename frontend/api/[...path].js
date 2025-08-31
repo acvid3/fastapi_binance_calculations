@@ -55,21 +55,39 @@ export default async function handler(req, res) {
     
     console.log(`[${new Date().toISOString()}] Upstream response status: ${upstream.status}`);
     
-    // Set response status
+    // Set response status - handle all status codes including 304
     res.status(upstream.status);
     
-    // Copy headers from upstream response
+    // Copy headers from upstream response, but be careful with caching headers
     upstream.headers.forEach((v, k) => {
-      if (k.toLowerCase() !== 'content-encoding') { // Avoid compression issues
+      const lowerKey = k.toLowerCase();
+      // Skip problematic headers that can cause issues
+      if (lowerKey !== 'content-encoding' && 
+          lowerKey !== 'content-length' &&
+          lowerKey !== 'transfer-encoding') {
         res.setHeader(k, v);
       }
     });
     
-    // Handle response body
+    // Handle response body - for all status codes except HEAD
     if (method !== 'HEAD') {
-      const responseText = await upstream.text();
-      console.log(`[${new Date().toISOString()}] Response body length: ${responseText.length}`);
-      res.send(responseText);
+      // For 304 Not Modified, we might not have a body, but we should still try to get it
+      try {
+        const responseText = await upstream.text();
+        console.log(`[${new Date().toISOString()}] Response body length: ${responseText.length}`);
+        
+        // If we have content, send it
+        if (responseText && responseText.length > 0) {
+          res.send(responseText);
+        } else {
+          // For 304 or empty responses, just end the response
+          res.end();
+        }
+      } catch (bodyError) {
+        console.error(`[${new Date().toISOString()}] Error reading response body:`, bodyError);
+        // Even if we can't read the body, end the response with the correct status
+        res.end();
+      }
     } else {
       res.end();
     }
