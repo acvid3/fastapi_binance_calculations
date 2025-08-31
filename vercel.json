@@ -1,0 +1,11 @@
+{
+    "buildCommand": "cd frontend && npm install && npm run build",
+    "outputDirectory": "frontend/dist",
+    "installCommand": "cd frontend && npm install",
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "http://13.50.4.32:8000/$1"
+        }
+    ]
+}
