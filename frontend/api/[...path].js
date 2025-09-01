@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   const seg = req.query.path;
   const tail = Array.isArray(seg) ? seg.join('/') : (seg || '');
-  const url = `http://13.50.4.32:8000/${tail}`;
+  const url = `http://13.50.4.32:8000/api/${tail}`;
 
   const method = (req.method || 'GET').toUpperCase();
 
