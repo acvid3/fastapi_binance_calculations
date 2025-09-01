@@ -172,9 +172,6 @@ function InvestmentForm({ onSubmit, loading, selectedSymbol }) {
                             onChange={handleInputChange}
                             required
                         >
-                            <option value="1m">1 minute</option>
-                            <option value="5m">5 minutes</option>
-                            <option value="15m">15 minutes</option>
                             <option value="1h">1 hour</option>
                             <option value="4h">4 hours</option>
                             <option value="1d">1 day</option>

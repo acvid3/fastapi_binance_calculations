@@ -1,6 +1,6 @@
 .summarySection h3 {
     margin-bottom: 25px;
-    color: #333;
+    color: #e8e9ea;
 }
 
 .summaryGrid {
@@ -11,16 +11,18 @@
 }
 
 .summaryCard {
-    background: #f8f9fa;
+    background: rgba(17, 17, 17, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 20px;
     border-radius: 8px;
     text-align: center;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(51, 51, 51, 0.5);
 }
 
 .summaryCard h4 {
     margin-bottom: 10px;
-    color: #666;
+    color: #9ca3af;
     font-size: 14px;
     font-weight: 500;
 }
@@ -28,7 +30,7 @@
 .summaryValue {
     font-size: 24px;
     font-weight: 600;
-    color: #333;
+    color: #e8e9ea;
 }
 
 .positive {

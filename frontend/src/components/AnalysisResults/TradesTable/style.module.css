@@ -1,12 +1,15 @@
 .tradesSection h3 {
     margin-bottom: 25px;
-    color: #333;
+    color: #e8e9ea;
 }
 
 .tableContainer {
+    background: rgba(17, 17, 17, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     overflow-x: auto;
     border-radius: 8px;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(51, 51, 51, 0.5);
 }
 
 .tradesTable {
@@ -16,22 +19,23 @@
 }
 
 .tradesTable th {
-    background: #f8f9fa;
+    background: #111827;
     padding: 15px 12px;
     text-align: left;
     font-weight: 600;
-    color: #333;
-    border-bottom: 1px solid #e9ecef;
+    color: #e8e9ea;
+    border-bottom: 1px solid #374151;
 }
 
 .tradesTable td {
     padding: 12px;
-    border-bottom: 1px solid #f1f3f4;
+    border-bottom: 1px solid #374151;
     vertical-align: top;
+    color: #e8e9ea;
 }
 
 .tradesTable tr:hover {
-    background: #f8f9fa;
+    background: #1f2937;
 }
 
 .buyRow {

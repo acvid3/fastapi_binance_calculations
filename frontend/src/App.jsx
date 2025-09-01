@@ -56,10 +56,6 @@ function App() {
                 <header className="app-header">
                     <h1>Investment Strategy Analysis</h1>
                     <p>Analyze investment returns with commissions and trading steps</p>
-                    <div className="deployment-info">
-                        <span>Frontend: Vercel</span>
-                        <span>Backend: AWS</span>
-                    </div>
                 </header>
                 
                 <main className="app-main">
