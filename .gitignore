@@ -138,3 +138,7 @@ public
 # Temporary folders
 tmp/
 temp/
+
+# Documentation files (temporary)
+*.md
+!README.md
