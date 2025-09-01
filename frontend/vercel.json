@@ -1,6 +1,8 @@
 {
-    "framework": "vite",
-    "installCommand": "npm install",
-    "buildCommand": "npm run build",
-    "outputDirectory": "dist"
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "http://13.50.4.32:8000/:path*" }
+  ]
 }
