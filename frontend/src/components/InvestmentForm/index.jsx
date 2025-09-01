@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { apiUrl } from '../../apiBase';
 import styles from './style.module.css';
-
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://13.50.4.32:8000';
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 function InvestmentForm({ onSubmit, loading, selectedSymbol }) {
     const [formData, setFormData] = useState({
@@ -36,7 +34,7 @@ function InvestmentForm({ onSubmit, loading, selectedSymbol }) {
     const fetchSymbols = async () => {
         setLoadingSymbols(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/symbols`);
+            const response = await fetch(apiUrl('symbols'));
             if (response.ok) {
                 const data = await response.json();
                 setSymbols(data.symbols);

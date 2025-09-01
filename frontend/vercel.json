@@ -3,6 +3,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "http://13.50.4.32:8000/:path*" }
+    { "source": "/api/:path*", "destination": "http://13.50.4.32:8000/api/:path*" }
   ]
 }
