@@ -5,11 +5,14 @@
     padding: 16px;
     margin: 8px 0;
     transition: all 0.3s ease;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .indicator:hover {
-    border-color: #007bff;
-    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+    border-color: #f7931a;
+    box-shadow: 0 2px 8px rgba(247, 147, 26, 0.2);
 }
 
 .priceInfo {
@@ -17,19 +20,25 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
 .price {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .change {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
-    padding: 4px 8px;
+    padding: 2px 6px;
     border-radius: 4px;
+    white-space: nowrap;
 }
 
 .change.positive {
@@ -89,8 +98,8 @@
 
 .progressBars {
     display: flex;
-    gap: 16px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
 .progressContainer {
@@ -99,11 +108,11 @@
 }
 
 .progressBar {
-    height: 8px;
+    height: 6px;
     background: #333;
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .progressFill {
@@ -120,7 +129,7 @@
 }
 
 .progressLabel {
-    font-size: 11px;
+    font-size: 9px;
     color: #888;
     font-weight: 500;
     text-transform: uppercase;
@@ -130,7 +139,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
+    font-size: 10px;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
 .volumeValue {
@@ -148,4 +159,59 @@
 
 .volumeChange.negative {
     color: #ff6b6b;
+}
+
+/* Compact version for table cells */
+.indicator.compact {
+    padding: 8px 6px;
+    margin: 4px 0;
+    min-height: 80px;
+}
+
+.indicator.compact .priceInfo {
+    margin-bottom: 8px;
+}
+
+.indicator.compact .price {
+    font-size: 13px;
+}
+
+.indicator.compact .change {
+    font-size: 10px;
+    padding: 2px 4px;
+}
+
+.indicator.compact .volumeIndicator {
+    padding-top: 6px;
+}
+
+.indicator.compact .volumeLabel {
+    margin-bottom: 6px;
+}
+
+.indicator.compact .progressBars {
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.indicator.compact .progressBar {
+    height: 4px;
+    margin-bottom: 2px;
+}
+
+.indicator.compact .progressLabel {
+    font-size: 8px;
+}
+
+.indicator.compact .volumeDetails {
+    font-size: 9px;
+}
+
+.indicator.compact .volumeText {
+    font-size: 11px;
+}
+
+.indicator.compact .volumeStatus {
+    font-size: 9px;
+    padding: 2px 4px;
 }

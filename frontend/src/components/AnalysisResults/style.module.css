@@ -10,8 +10,8 @@
 
 .tabs {
     display: flex;
-    border-bottom: 1px solid #374151;
-    background: #111827;
+    border-bottom: 1px solid #333333;
+    background: #1a1a1a;
 }
 
 .tab {
@@ -27,12 +27,12 @@
 }
 
 .tab:hover {
-    background: #1f2937;
+    background: #232323;
     color: #e8e9ea;
 }
 
 .tab.active {
-    background: #1a1d29;
+    background: #1f1f1f;
     color: #f7931a;
     border-bottom: 2px solid #f7931a;
 }

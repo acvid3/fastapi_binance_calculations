@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './style.module.css';
 
-const MarketIndicator = ({ price, previousPrice, volume, volumeChange }) => {
+const MarketIndicator = ({ price, previousPrice, volume, volumeChange, compact = false }) => {
     const priceChange = price - previousPrice;
     const priceChangePercent = previousPrice ? (priceChange / previousPrice) * 100 : 0;
     
@@ -20,7 +20,7 @@ const MarketIndicator = ({ price, previousPrice, volume, volumeChange }) => {
     const volumeStatus = getVolumeStatus();
     
     return (
-        <div className={styles.indicator}>
+        <div className={`${styles.indicator} ${compact ? styles.compact : ''}`}>
             <div className={styles.priceInfo}>
                 <span className={styles.price}>${price.toFixed(2)}</span>
                 <span className={`${styles.change} ${isBullish ? styles.positive : styles.negative}`}>

@@ -4,38 +4,66 @@
 }
 
 .tableContainer {
-    background: rgba(17, 17, 17, 0.8);
+    background: rgba(26, 26, 26, 0.8);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    overflow-x: auto;
+    overflow-x: hidden;
     border-radius: 8px;
-    border: 1px solid rgba(51, 51, 51, 0.5);
+    border: 1px solid rgba(51, 51, 51, 0.6);
 }
 
 .tradesTable {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    table-layout: fixed;
+    font-size: 12px;
 }
 
+/* Column widths for better content distribution */
+.tradesTable th:nth-child(1), .tradesTable td:nth-child(1) { width: 8%; } /* ID */
+.tradesTable th:nth-child(2), .tradesTable td:nth-child(2) { width: 6%; } /* Type */
+.tradesTable th:nth-child(3), .tradesTable td:nth-child(3) { width: 13%; } /* Date/Time */
+.tradesTable th:nth-child(4), .tradesTable td:nth-child(4) { width: 11%; } /* ETH Amount */
+.tradesTable th:nth-child(5), .tradesTable td:nth-child(5) { width: 11%; } /* USDT Amount */
+.tradesTable th:nth-child(6), .tradesTable td:nth-child(6) { width: 9%; } /* Commission */
+.tradesTable th:nth-child(7), .tradesTable td:nth-child(7) { width: 11%; } /* Balance After */
+.tradesTable th:nth-child(8), .tradesTable td:nth-child(8) { width: 9%; } /* Profit */
+.tradesTable th:nth-child(9), .tradesTable td:nth-child(9) { width: 7%; } /* Status */
+.tradesTable th:nth-child(10), .tradesTable td:nth-child(10) { width: 15%; } /* Market Indicator */
+
 .tradesTable th {
-    background: #111827;
-    padding: 15px 12px;
+    background: #1a1a1a;
+    padding: 10px 6px;
     text-align: left;
     font-weight: 600;
     color: #e8e9ea;
-    border-bottom: 1px solid #374151;
+    border-bottom: 1px solid #333333;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    font-size: 11px;
+}
+
+/* Special padding for Market Indicator column */
+.tradesTable th:nth-child(10), .tradesTable td:nth-child(10) {
+    padding: 6px 3px;
+    min-height: 100px;
 }
 
 .tradesTable td {
-    padding: 12px;
-    border-bottom: 1px solid #374151;
+    padding: 8px 6px;
+    border-bottom: 1px solid #333333;
     vertical-align: top;
     color: #e8e9ea;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    font-size: 11px;
+    min-height: 100px;
 }
 
 .tradesTable tr:hover {
-    background: #1f2937;
+    background: #232323;
 }
 
 .buyRow {
@@ -47,9 +75,9 @@
 }
 
 .tradeType {
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -65,9 +93,9 @@
 }
 
 .status {
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -91,23 +119,60 @@
 }
 
 .indicatorCell {
-    min-width: 200px;
-    max-width: 250px;
+    min-width: auto;
+    max-width: none;
+}
+
+.mobileContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .tradesTable {
-        font-size: 12px;
+        font-size: 10px;
+        table-layout: fixed;
     }
     
     .tradesTable th,
     .tradesTable td {
-        padding: 8px 6px;
+        padding: 5px 2px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
     
+    .tradesTable th {
+        font-size: 9px;
+    }
+    
+    .tradesTable td {
+        font-size: 9px;
+    }
+    
+    /* Even smaller padding for Market Indicator on mobile */
+    .tradesTable th:nth-child(10), .tradesTable td:nth-child(10) {
+        padding: 2px 1px;
+    }
+    
+    /* Hide less important columns on mobile */
+    .tradesTable th:nth-child(6), .tradesTable td:nth-child(6) { display: none; } /* Commission */
+    .tradesTable th:nth-child(8), .tradesTable td:nth-child(8) { display: none; } /* Profit */
+    
+    /* Adjust remaining column widths for mobile */
+    .tradesTable th:nth-child(1), .tradesTable td:nth-child(1) { width: 10%; } /* ID */
+    .tradesTable th:nth-child(2), .tradesTable td:nth-child(2) { width: 8%; } /* Type */
+    .tradesTable th:nth-child(3), .tradesTable td:nth-child(3) { width: 16%; } /* Date/Time */
+    .tradesTable th:nth-child(4), .tradesTable td:nth-child(4) { width: 14%; } /* ETH Amount */
+    .tradesTable th:nth-child(5), .tradesTable td:nth-child(5) { width: 14%; } /* USDT Amount */
+    .tradesTable th:nth-child(7), .tradesTable td:nth-child(7) { width: 14%; } /* Balance After */
+    .tradesTable th:nth-child(9), .tradesTable td:nth-child(9) { width: 8%; } /* Status */
+    .tradesTable th:nth-child(10), .tradesTable td:nth-child(10) { width: 16%; } /* Market Indicator */
+    
     .indicatorCell {
-        min-width: 150px;
-        max-width: 180px;
+        min-width: auto;
+        max-width: none;
     }
 }
