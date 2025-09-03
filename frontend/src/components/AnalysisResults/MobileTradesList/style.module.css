@@ -1,0 +1,167 @@
+.tradeCard {
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(51, 51, 51, 0.6);
+    margin-bottom: 16px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.tradeCard:hover {
+    border-color: #f7931a;
+    box-shadow: 0 4px 12px rgba(247, 147, 26, 0.1);
+}
+
+.buyCard {
+    border-left: 4px solid #28a745;
+}
+
+.sellCard {
+    border-left: 4px solid #dc3545;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #333333;
+}
+
+.tradeId {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.idLabel {
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.idValue {
+    font-size: 16px;
+    color: #e8e9ea;
+    font-weight: 600;
+}
+
+.tradeType {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.tradeType.buy {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.tradeType.sell {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.cardContent {
+    margin-bottom: 16px;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.infoRow:last-child {
+    margin-bottom: 0;
+}
+
+.label {
+    font-size: 13px;
+    color: #9ca3af;
+    font-weight: 500;
+    flex: 1;
+}
+
+.value {
+    font-size: 13px;
+    color: #e8e9ea;
+    font-weight: 500;
+    text-align: right;
+    flex: 1;
+}
+
+.positive {
+    color: #28a745 !important;
+    font-weight: 600;
+}
+
+.negative {
+    color: #dc3545 !important;
+    font-weight: 600;
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status.open {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.status.closed {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.marketIndicatorContainer {
+    border-top: 1px solid #333333;
+    padding-top: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .tradeCard {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .cardHeader {
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+    
+    .idValue {
+        font-size: 14px;
+    }
+    
+    .infoRow {
+        margin-bottom: 8px;
+        padding: 6px 0;
+    }
+    
+    .label,
+    .value {
+        font-size: 12px;
+    }
+    
+    .marketIndicatorContainer {
+        padding-top: 12px;
+    }
+}

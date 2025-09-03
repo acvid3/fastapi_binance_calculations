@@ -1,34 +1,23 @@
 import React from 'react';
 import styles from './style.module.css';
 import MarketIndicator from '../../MarketIndicator';
+import MobileTradesList from '../MobileTradesList';
+import { useIsMobile } from '../../../hooks/useIsMobile';
+import { formatCurrency, getMarketData } from '../../../utils/tradeUtils';
 
 function TradesTable({ trades }) {
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(value);
-    };
+    const isMobile = useIsMobile();
 
-    const getMarketData = (trade, index) => {
-        if (index === 0) {
-            return {
-                previousPrice: trade.price,
-                volumeChange: 0
-            };
-        }
-        
-        const previousTrade = trades[index - 1];
-        const priceChange = trade.price - previousTrade.price;
-        const volumeChange = ((trade.usdt_amount - previousTrade.usdt_amount) / previousTrade.usdt_amount) * 100;
-        
-        return {
-            previousPrice: previousTrade.price,
-            volumeChange: volumeChange
-        };
-    };
+    if (isMobile) {
+        return (
+            <div className={styles.tradesSection}>
+                <h3>Trade History</h3>
+                <div className={styles.mobileContainer}>
+                    <MobileTradesList trades={trades} />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.tradesSection}>
@@ -40,7 +29,6 @@ function TradesTable({ trades }) {
                             <th>ID</th>
                             <th>Type</th>
                             <th>Date/Time</th>
-                            <th>Price</th>
                             <th>ETH Amount</th>
                             <th>USDT Amount</th>
                             <th>Commission</th>
@@ -52,7 +40,7 @@ function TradesTable({ trades }) {
                     </thead>
                     <tbody>
                         {trades.map((trade, index) => {
-                            const marketData = getMarketData(trade, index);
+                            const marketData = getMarketData(trade, index, trades);
                             
                             return (
                                 <tr key={index} className={trade.order_type === 'BUY' ? styles.buyRow : styles.sellRow}>
@@ -63,7 +51,6 @@ function TradesTable({ trades }) {
                                         </span>
                                     </td>
                                     <td>{trade.date_time}</td>
-                                    <td>{formatCurrency(trade.price)}</td>
                                     <td>{trade.eth_amount.toFixed(6)}</td>
                                     <td>{formatCurrency(trade.usdt_amount)}</td>
                                     <td>{formatCurrency(trade.commission)}</td>
@@ -86,6 +73,7 @@ function TradesTable({ trades }) {
                                             previousPrice={marketData.previousPrice}
                                             volume={trade.usdt_amount}
                                             volumeChange={marketData.volumeChange}
+                                            compact={true}
                                         />
                                     </td>
                                 </tr>
